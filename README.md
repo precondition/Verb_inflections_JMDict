@@ -8,6 +8,8 @@ Convert JMDict files in YomiChan format into files containing the following infl
 - Imperative
 - Conditional
 
+All the heavy lifting is done by [PyKatsuyou](https://github.com/SmashinFries/PyKatsuyou) and its dependencies.
+
 # Usage
 ```
 python3 generate_ja_conjugations.py <input_file> <output_file>
