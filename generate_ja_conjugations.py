@@ -56,7 +56,7 @@ for entry in termbank_reader:
         # Most likely the igo tagger that failed to parse the word correctly.
         # For example, it breaks down the verb "薫じる" into three components
         # even though it is a single component.
-        print("xxx", entry[0], "xxx")
+        print("Skipping", entry[0], "because Igo failed to parse it correctly.")
         continue
 
 with open(output_file, "w") as out_f:
