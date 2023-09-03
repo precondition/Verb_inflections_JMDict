@@ -32,6 +32,20 @@ def generate_conjugated_entries(entry: list) -> list:
         entries.append([inflection, hiragana_inflection(entry, inflection)] + entry[2:])
     return entries[1:] # Ignore base form
 
+def is_kana(char: str) -> bool:
+    # Define Unicode character ranges for katakana and hiragana
+    #                ァ       ㇿ
+    katakana_range = (0x30A1, 0x31FF)
+    #                 ぁ      ゟ
+    hiragana_range = (0x3040, 0x309F)
+
+    # Get the Unicode code point of the input character
+    char_code = ord(char)
+
+    # Check if the character code falls within the katakana or hiragana ranges
+    return katakana_range[0] <= char_code <= katakana_range[1] or \
+           hiragana_range[0] <= char_code <= hiragana_range[1]
+
 input_file = sys.argv[1]
 output_file = sys.argv[2]
 with open(input_file, "r", encoding="utf-8") as in_f:
@@ -39,16 +53,16 @@ with open(input_file, "r", encoding="utf-8") as in_f:
 
 conj_ve = []
 for entry in termbank_reader:
-    # Ignore entries where the head word is only a single word.
-    # All verbs in contemporary japanese are at least 2 characters.
-    if len(entry[0]) == 1:
-        continue
+    headword: str = entry[0]
     part_of_speech: str = entry[2]
     # Ignore non-verbs
     if not part_of_speech.startswith("v"):
         continue
     # Ignore suru and zuru verbs
     if part_of_speech[1] == 'z' or part_of_speech[1] == 's':
+        continue
+    if not is_kana(headword[-1]):
+        print("Skipping", headword, "because verbs ending with non-kana characters are not supported.")
         continue
     try:
         conj_ve += generate_conjugated_entries(entry)
@@ -58,6 +72,9 @@ for entry in termbank_reader:
         # even though it is a single component.
         print("Skipping", entry[0], "because Igo failed to parse it correctly.")
         continue
+    except Exception as err:
+        print("An error occured while inflecting the verb", entry[0])
+        raise err
 
 with open(output_file, "w") as out_f:
     # json.dump(out_f, ...) doesn't work for some reason...
