@@ -5,7 +5,7 @@ Input file name must be a sequential JMDict file.
 Something like:
     [["識しませんでした", "しるしませんでした", "v5s", "v5", 10, ["écrire", "coucher sur le papier", "noter"], 1223140, ""], ..., ["高めなくて", "たかめなくて", "v1 vt", "v1", 706, ["élever", "augmenter", "hausser", "surélever"], 1283240, "P ichi news"], ["高めるな", "たかめるな", "v1 vt", "v1", 706, ["élever", "augmenter", "hausser", "surélever"], 1283240, "P ichi news"]]
 """
-from pykatsuyou import getInflections
+from patched_pykatsuyou import getInflections
 import sys
 import json
 
