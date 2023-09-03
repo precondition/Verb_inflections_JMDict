@@ -9,16 +9,6 @@ from pykatsuyou import getInflections
 import sys
 import json
 
-input_file = sys.argv[1]
-output_file = sys.argv[2]
-with open(input_file, "r") as in_f:
-    # Keep only verbs
-    termbankv = tuple(filter(lambda x: x[2].startswith("v"), eval(in_f.read())))
-    # Remove suru and zuru verbs
-    termbankv = tuple(filter(lambda x: x[2][1] != 'z', termbankv))
-    termbankv = tuple(filter(lambda x: x[2][1] != 's', termbankv))
-
-
 def hiragana_inflection(entry: list, inflection: str) -> str:
     """
     Takes an inflected verb and uses info of the dictionary entry
@@ -42,8 +32,20 @@ def generate_conjugated_entries(entry: list) -> list:
         entries.append([inflection, hiragana_inflection(entry, inflection)] + entry[2:])
     return entries[1:] # Ignore base form
 
+input_file = sys.argv[1]
+output_file = sys.argv[2]
+with open(input_file, "r", encoding="utf-8") as in_f:
+    termbank_reader = json.load(in_f)
+
 conj_ve = []
-for entry in termbankv:
+for entry in termbank_reader:
+    part_of_speech: str = entry[2]
+    # Ignore non-verbs
+    if not part_of_speech.startswith("v"):
+        continue
+    # Ignore suru and zuru verbs
+    if part_of_speech[1] == 'z' or part_of_speech[1] == 's':
+        continue
     try:
         conj_ve += generate_conjugated_entries(entry)
     except IndexError:
