@@ -39,6 +39,10 @@ with open(input_file, "r", encoding="utf-8") as in_f:
 
 conj_ve = []
 for entry in termbank_reader:
+    # Ignore entries where the head word is only a single word.
+    # All verbs in contemporary japanese are at least 2 characters.
+    if len(entry[0]) == 1:
+        continue
     part_of_speech: str = entry[2]
     # Ignore non-verbs
     if not part_of_speech.startswith("v"):
