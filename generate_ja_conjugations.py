@@ -52,8 +52,11 @@ for entry in termbank_reader:
         continue
     try:
         conj_ve += generate_conjugated_entries(entry)
-    except IndexError:
-        print(entry[0])
+    except IndexError as err:
+        # Most likely the igo tagger that failed to parse the word correctly.
+        # For example, it breaks down the verb "薫じる" into three components
+        # even though it is a single component.
+        print("xxx", entry[0], "xxx")
         continue
 
 with open(output_file, "w") as out_f:
